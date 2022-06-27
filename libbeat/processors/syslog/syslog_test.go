@@ -56,6 +56,7 @@ func mustParseTime(layout, value string, loc *time.Location) time.Time {
 }
 
 var syslogCases = map[string]struct {
+<<<<<<< HEAD
 	Cfg      *common.Config
 	In       common.MapStr
 	Want     common.MapStr
@@ -72,6 +73,24 @@ var syslogCases = map[string]struct {
 		Want: common.MapStr{
 			"log": common.MapStr{
 				"syslog": common.MapStr{
+=======
+	cfg      *conf.C
+	in       mapstr.M
+	want     mapstr.M
+	wantTime time.Time
+	wantErr  bool
+}{
+	"rfc-3164": {
+		cfg: conf.MustNewConfigFrom(mapstr.M{
+			"timezone": "America/Chicago",
+		}),
+		in: mapstr.M{
+			"message": `<13>Oct 11 22:14:15 test-host su[1024]: this is the message`,
+		},
+		want: mapstr.M{
+			"log": mapstr.M{
+				"syslog": mapstr.M{
+>>>>>>> cabc8badb9 ([libbeat] Improve syslog parser/processor error handling (#31798))
 					"priority": 13,
 					"facility": common.MapStr{
 						"code": 1,
@@ -88,9 +107,10 @@ var syslogCases = map[string]struct {
 			},
 			"message": "this is the message",
 		},
-		WantTime: mustParseTime(time.Stamp, "Oct 11 22:14:15", cfgtype.MustNewTimezone("America/Chicago").Location()),
+		wantTime: mustParseTime(time.Stamp, "Oct 11 22:14:15", cfgtype.MustNewTimezone("America/Chicago").Location()),
 	},
 	"rfc-5424": {
+<<<<<<< HEAD
 		Cfg: common.MustNewConfigFrom(common.MapStr{}),
 		In: common.MapStr{
 			"message": `<165>1 2003-10-11T22:14:15.003Z mymachine.example.com evntslog 1024 ID47 [exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"][examplePriority@32473 class="high"] this is the message`,
@@ -98,6 +118,15 @@ var syslogCases = map[string]struct {
 		Want: common.MapStr{
 			"log": common.MapStr{
 				"syslog": common.MapStr{
+=======
+		cfg: conf.MustNewConfigFrom(mapstr.M{}),
+		in: mapstr.M{
+			"message": `<165>1 2003-10-11T22:14:15.003Z mymachine.example.com evntslog 1024 ID47 [exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"][examplePriority@32473 class="high"] this is the message`,
+		},
+		want: mapstr.M{
+			"log": mapstr.M{
+				"syslog": mapstr.M{
+>>>>>>> cabc8badb9 ([libbeat] Improve syslog parser/processor error handling (#31798))
 					"priority": 165,
 					"facility": common.MapStr{
 						"code": 20,
@@ -112,11 +141,11 @@ var syslogCases = map[string]struct {
 					"procid":   "1024",
 					"msgid":    "ID47",
 					"version":  "1",
-					"structured_data": map[string]map[string]string{
-						"examplePriority@32473": {
+					"structured_data": map[string]interface{}{
+						"examplePriority@32473": map[string]interface{}{
 							"class": "high",
 						},
-						"exampleSDID@32473": {
+						"exampleSDID@32473": map[string]interface{}{
 							"eventID":     "1011",
 							"eventSource": "Application",
 							"iut":         "3",
@@ -126,7 +155,7 @@ var syslogCases = map[string]struct {
 			},
 			"message": "this is the message",
 		},
-		WantTime: mustParseTime(time.RFC3339Nano, "2003-10-11T22:14:15.003Z", nil),
+		wantTime: mustParseTime(time.RFC3339Nano, "2003-10-11T22:14:15.003Z", nil),
 	},
 }
 
@@ -136,22 +165,22 @@ func TestSyslog(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			p, err := New(tc.Cfg)
+			p, err := New(tc.cfg)
 			if err != nil {
 				panic(err)
 			}
 			event := &beat.Event{
-				Fields: tc.In,
+				Fields: tc.in,
 			}
 
 			got, gotErr := p.Run(event)
-			if tc.WantErr {
+			if tc.wantErr {
 				assert.Error(t, gotErr)
 			} else {
 				assert.NoError(t, gotErr)
 			}
 
-			assert.Equal(t, tc.Want, got.Fields)
+			assert.Equal(t, tc.want, got.Fields)
 		})
 	}
 }
@@ -163,9 +192,9 @@ func BenchmarkSyslog(b *testing.B) {
 			b.ReportAllocs()
 			for i := 0; i < b.N; i++ {
 
-				p, _ := New(bc.Cfg)
+				p, _ := New(bc.cfg)
 				event := &beat.Event{
-					Fields: bc.In,
+					Fields: bc.in,
 				}
 
 				_, _ = p.Run(event)
@@ -176,6 +205,7 @@ func BenchmarkSyslog(b *testing.B) {
 
 func TestAppendStringField(t *testing.T) {
 	tests := map[string]struct {
+<<<<<<< HEAD
 		InMap   common.MapStr
 		InField string
 		InValue string
@@ -186,36 +216,75 @@ func TestAppendStringField(t *testing.T) {
 			InField: "error",
 			InValue: "foo",
 			Want: common.MapStr{
+=======
+		inMap   mapstr.M
+		inField string
+		inValue string
+		want    mapstr.M
+	}{
+		"nil": {
+			inMap:   mapstr.M{},
+			inField: "error",
+			inValue: "foo",
+			want: mapstr.M{
+>>>>>>> cabc8badb9 ([libbeat] Improve syslog parser/processor error handling (#31798))
 				"error": "foo",
 			},
 		},
 		"string": {
+<<<<<<< HEAD
 			InMap: common.MapStr{
 				"error": "foo",
 			},
 			InField: "error",
 			InValue: "bar",
 			Want: common.MapStr{
+=======
+			inMap: mapstr.M{
+				"error": "foo",
+			},
+			inField: "error",
+			inValue: "bar",
+			want: mapstr.M{
+>>>>>>> cabc8badb9 ([libbeat] Improve syslog parser/processor error handling (#31798))
 				"error": []string{"foo", "bar"},
 			},
 		},
 		"string-slice": {
+<<<<<<< HEAD
 			InMap: common.MapStr{
 				"error": []string{"foo", "bar"},
 			},
 			InField: "error",
 			InValue: "some value",
 			Want: common.MapStr{
+=======
+			inMap: mapstr.M{
+				"error": []string{"foo", "bar"},
+			},
+			inField: "error",
+			inValue: "some value",
+			want: mapstr.M{
+>>>>>>> cabc8badb9 ([libbeat] Improve syslog parser/processor error handling (#31798))
 				"error": []string{"foo", "bar", "some value"},
 			},
 		},
 		"interface-slice": {
+<<<<<<< HEAD
 			InMap: common.MapStr{
 				"error": []interface{}{"foo", "bar"},
 			},
 			InField: "error",
 			InValue: "some value",
 			Want: common.MapStr{
+=======
+			inMap: mapstr.M{
+				"error": []interface{}{"foo", "bar"},
+			},
+			inField: "error",
+			inValue: "some value",
+			want: mapstr.M{
+>>>>>>> cabc8badb9 ([libbeat] Improve syslog parser/processor error handling (#31798))
 				"error": []interface{}{"foo", "bar", "some value"},
 			},
 		},
@@ -225,9 +294,9 @@ func TestAppendStringField(t *testing.T) {
 		tc := tc
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			appendStringField(tc.InMap, tc.InField, tc.InValue)
+			appendStringField(tc.inMap, tc.inField, tc.inValue)
 
-			assert.Equal(t, tc.Want, tc.InMap)
+			assert.Equal(t, tc.want, tc.inMap)
 		})
 	}
 }
