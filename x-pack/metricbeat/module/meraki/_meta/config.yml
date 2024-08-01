@@ -1,0 +1,5 @@
+- module: meraki
+  metricsets: ["dashboard_api"]
+  enabled: false
+  period: 60s
+

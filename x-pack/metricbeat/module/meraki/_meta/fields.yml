@@ -1,0 +1,5 @@
+- key: meraki
+  title: "meraki"
+  release: beta
+  description: >
+    meraki module

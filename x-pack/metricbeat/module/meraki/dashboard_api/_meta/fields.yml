@@ -1,0 +1,10 @@
+- name: dashboard_api
+  type: group
+  release: beta
+  description: >
+    dashboard_api
+  fields:
+    - name: counter
+      type: integer
+      description: >
+        Example field
