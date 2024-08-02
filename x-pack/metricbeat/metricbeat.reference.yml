@@ -1104,9 +1104,8 @@ metricbeat.modules:
 #-------------------------------- Meraki Module --------------------------------
 - module: meraki
   metricsets: ["dashboard_api"]
-  enabled: true
   period: 60s
-  apiKey: 7bd254f1eba24554ba628c21b421145e9823j384
+  apiKey: <api_key>
   organizations: ["123456"]
 
 #------------------------------- MongoDB Module -------------------------------
