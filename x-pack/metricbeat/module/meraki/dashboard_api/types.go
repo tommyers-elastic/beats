@@ -65,12 +65,12 @@ type CoterminationLicense struct {
 type PerDeviceLicense struct {
 	State                   string // one of ["Active", "Expired", "RecentlyQueued", "Expiring", "Unused", "UnusedActive", "Unassigned"]
 	Count                   *int
-	ExpirationState         string // one of ["critial", "warning"]
-	ExpirationThresholdDays *int
-	SoonestActivationDate   string
-	SoonestActivationCount  *int
-	OldestActivationDate    string
-	OldestActivationCount   *int
+	ExpirationState         string // one of ["critial", "warning"] (only for Expiring licenses)
+	ExpirationThresholdDays *int   // only for Expiring licenses
+	SoonestActivationDate   string // only for Unused licenses
+	SoonestActivationCount  *int   // only for Unused licenses
+	OldestActivationDate    string // only for UnusedActive licenses
+	OldestActivationCount   *int   // only for UnusedActive licenses
 	Type                    string // one of ["ENT", "UPGR", "ADV"] (only for Unassigned licenses)
 }
 
